@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   db:
-    container_name: db
+    container_name: shopdb
     image: postgres:15-alpine
     volumes:
       - ./postgres/data:/var/lib/postgres/data
@@ -12,10 +12,12 @@ services:
       - POSTGRES_PASSWORD=postgres
     expose:
       - 5432
+    ports:
+      - 5432:5432
     restart: always
 
   backend:
-    container_name: backend
+    container_name: django_shop_backend
     build:
       context: .
       dockerfile: ./dockerfiles/dev/django/Dockerfile
@@ -27,6 +29,8 @@ services:
       - 8000:8000
     environment:
       - DEBUG=True
+    # env_file:
+    #   - ./envs/dev/django/.env
     restart: always
     depends_on:
       - db
